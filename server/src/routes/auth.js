@@ -1,6 +1,11 @@
 const express = require('express');
-
+const { validateSignUpData } = require('../utils/validation')
+const validator = require('validator');
 const authRouter = express.Router();
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
+
+// authRouter.use();
 
 authRouter.post('/signup', async (req, res) => {
     try {
@@ -32,7 +37,7 @@ authRouter.post('/login', async (req, res) => {
         if (!user) {
             throw new Error("Invalid Credentials");
         }
-        const isPasswordValid = await user.validatePassword(password);
+        const isPasswordValid = await user.verifyPassword(password);
 
         if (isPasswordValid) {
             // Create a JWT token
@@ -40,7 +45,7 @@ authRouter.post('/login', async (req, res) => {
 
             // Add token to cookie and send the response back to user
             res.cookie('token', token);
-            res.send("User logged in successfully");
+            res.status(201).json({ token, user });
         } else {
             throw new Error("Invalid Credentials");
         }
@@ -49,6 +54,13 @@ authRouter.post('/login', async (req, res) => {
         res.status(400).send({ error: err.message });
     }
 
+})
+
+authRouter.post("/logout", async (req, res) => {
+    res.cookie("token", null, {
+        expires: new Date(Date.now()),
+    });
+    res.send("Logout Successfully")
 })
 
 module.exports = authRouter;

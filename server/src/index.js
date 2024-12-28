@@ -11,11 +11,11 @@ app.use(cookieParser());
 
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
-const requestRouter = require('./routes/request');
+// const requestRouter = require('./routes/request');
 
 app.use('/',authRouter);
 app.use('/',profileRouter);
-app.use('/',requestRouter);
+// app.use('/',requestRouter);
 
 app.patch("/user/:userId", async (req, res) => {
     const userId = req.params?.userId;
